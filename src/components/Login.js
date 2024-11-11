@@ -1,14 +1,15 @@
 import { useRef, useState } from "react";
 import Header from "./Header";
 import { ValidationCheck } from "../utils/validation";
-
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../utils/firebase";
 const Login = () => {
   const name = useRef();
   const email = useRef();
   const password = useRef();
 
   const [isLoginForm, setIsLoginForm] = useState(false);
-  const [isFormValid, setIsFormValid] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
   const togleSignInForm = () => {
     setIsLoginForm(!isLoginForm);
   };
@@ -19,7 +20,28 @@ const Login = () => {
       email.current.value,
       password.current.value
     );
-    setIsFormValid(message);
+    setErrorMessage(message);
+
+    if (message) return;
+    if (!isLoginForm) {
+      createUserWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed up
+          const user = userCredential.user;
+          console.log(user);
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMessage(errorCode + "-" + errorMessage);
+        });
+    } else {
+    }
   };
   return (
     <>
@@ -52,9 +74,9 @@ const Login = () => {
             ref={password}
             type="password"
             placeholder="Password"
-            className="p-2 my-4 w-full"
+            className="p-2 my-4 w-full text-black"
           />
-          <p>{isFormValid}</p>
+          <p>{errorMessage}</p>
           <button
             onClick={sumbmitHandler}
             className="p-4 my-4 w-full bg-red-800 rounded-lg"
