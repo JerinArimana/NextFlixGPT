@@ -4,9 +4,9 @@ import { ValidationCheck } from "../utils/validation";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../utils/firebase";
 const Login = () => {
-  const name = useRef();
-  const email = useRef();
-  const password = useRef();
+  const name = useRef(null);
+  const email = useRef(null);
+  const password = useRef(null);
 
   const [isLoginForm, setIsLoginForm] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
